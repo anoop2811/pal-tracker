@@ -1,0 +1,7 @@
+---
+applications:
+- name: pal-tracker
+  path: build/libs/pal-tracker.jar
+  host: green-pal-tracker
+  env:
+    WELCOME_MESSAGE: Hello from Cloud Foundry

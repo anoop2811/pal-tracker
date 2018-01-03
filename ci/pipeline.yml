@@ -1,45 +1,50 @@
 ---
+resource_types:
+  - name: google-cloud-storage
+    type: docker-image
+    source:
+      repository: frodenas/gcs-resource
+
 resources:
 - name: pal-tracker
   type: git
   source:
-    uri: {{github-repository}}
+    uri: ((green-pal-tracker/Notes/github-repository))
     branch: master
-    private_key: {{github-private-key}}
+    private_key: ((green-pal-tracker/Notes/github-private-key))
 
 - name: pal-tracker-artifacts
-  type: s3
+  type: google-cloud-storage
   source:
-    bucket: {{aws-bucket}}
-    regexp: releases/pal-tracker-(.*).jar
-    access_key_id: {{aws-access-key-id}}
-    secret_access_key: {{aws-secret-access-key}}
+    bucket: triage-pal-tracker
+    regexp: green/releases/pal-tracker-(.*).jar
+    json_key: ((yellow-pal-tracker/Notes/triage-pal-tracker-bucket-gcp-key))
 
 - name: version
   type: semver
   source:
-    bucket: {{aws-bucket}}
-    key: pal-tracker/version
-    access_key_id: {{aws-access-key-id}}
-    secret_access_key: {{aws-secret-access-key}}
+    driver: gcs
+    bucket: triage-pal-tracker
+    key: green/versions/version
+    json_key: ((yellow-pal-tracker/Notes/triage-pal-tracker-bucket-gcp-key))
 
 - name: review-deployment
   type: cf
   source:
-    api: {{cf-api-url}}
-    username: {{cf-username}}
-    password: {{cf-password}}
-    organization: {{cf-org}}
-    space: review
+    api: https://api.run.pivotal.io
+    username: ((PWS: App Deployment Account/Username))
+    password: ((PWS: App Deployment Account/Password))
+    organization: Davos
+    space: green
 
 - name: production-deployment
   type: cf
   source:
-    api: {{cf-api-url}}
-    username: {{cf-username}}
-    password: {{cf-password}}
-    organization: {{cf-org}}
-    space: production
+    api: https://api.run.pivotal.io
+    username: ((PWS: App Deployment Account/Username))
+    password: ((PWS: App Deployment Account/Password))
+    organization: Davos
+    space: green
 
 jobs:
 - name: build

@@ -65,9 +65,22 @@ jobs:
 - name: deploy-review
   plan:
   - get: pal-tracker
+    passed: [build]
   - get: pal-tracker-artifacts
     trigger: true
     passed: [build]
+  - task: migrate database
+    file: pal-tracker/ci/migrateDatabase.yml
+    params:
+      CF_API_URL: https://api.run.pivotal.io
+      CF_USERNAME: ((PWS: App Deployment Account/Username))
+      CF_PASSWORD: ((PWS: App Deployment Account/Password))
+      CF_ORG: Davos
+      CF_SPACE: green-review
+      MYSQL_IP: ((green-pal-tracker/Notes/mysql-ip))
+      DATABASE_NAME: ((green-pal-tracker/Notes/review-database-name))
+      DATABASE_USERNAME: ((green-pal-tracker/Notes/review-database-username))
+      DATABASE_PASSWORD: ((green-pal-tracker/Notes/review-database-password))
   - put: review-deployment
     params:
       manifest: pal-tracker/manifest-review.yml
@@ -78,8 +91,21 @@ jobs:
 - name: deploy-production
   plan:
   - get: pal-tracker
+    passed: [build]
   - get: pal-tracker-artifacts
     passed: [deploy-review]
+  - task: migrate database
+    file: pal-tracker/ci/migrateDatabase.yml
+    params:
+      CF_API_URL: https://api.run.pivotal.io
+      CF_USERNAME: ((PWS: App Deployment Account/Username))
+      CF_PASSWORD: ((PWS: App Deployment Account/Password))
+      CF_ORG: Davos
+      CF_SPACE: green
+      MYSQL_IP: ((green-pal-tracker/Notes/mysql-ip))
+      DATABASE_NAME: (green-pal-tracker/Notes/production-database-name))
+      DATABASE_USERNAME: ((green-pal-tracker/Notes/production-database-username))
+      DATABASE_PASSWORD: ((green-pal-tracker/Notes/production-database-password))
   - put: production-deployment
     params:
       manifest: pal-tracker/manifest-production.yml

@@ -4,4 +4,4 @@ applications:
   path: build/libs/pal-tracker.jar
   host: green-pal-tracker-review
   env:
-    WELCOME_MESSAGE: Hello from Cloud Foundry
+    WELCOME_MESSAGE: Hello from the review environment

@@ -103,7 +103,7 @@ jobs:
       CF_ORG: Davos
       CF_SPACE: green
       MYSQL_IP: ((green-pal-tracker/Notes/mysql-ip))
-      DATABASE_NAME: (green-pal-tracker/Notes/production-database-name))
+      DATABASE_NAME: ((green-pal-tracker/Notes/production-database-name))
       DATABASE_USERNAME: ((green-pal-tracker/Notes/production-database-username))
       DATABASE_PASSWORD: ((green-pal-tracker/Notes/production-database-password))
   - put: production-deployment

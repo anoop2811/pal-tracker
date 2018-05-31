@@ -9,7 +9,7 @@ data class TimeEntry @JsonCreator constructor(val projectId: Long,
                      val hours: Int) {
     var id: Long = 0L
 
-    constructor(id: Long, projectId: Long, userId: Long, date: LocalDate, hours: Int) :this( projectId, userId, date, hours) {
+    constructor(id: Long, projectId: Long, userId: Long, date: LocalDate, hours: Int) : this(projectId, userId, date, hours) {
         this.id = id
     }
 

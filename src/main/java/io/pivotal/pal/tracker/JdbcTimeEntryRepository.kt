@@ -2,6 +2,7 @@ package io.pivotal.pal.tracker
 
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert
 import org.springframework.jdbc.support.GeneratedKeyHolder
 import java.sql.Date
 import java.sql.ResultSet
@@ -12,24 +13,22 @@ class JdbcTimeEntryRepository(dataSource: DataSource) : TimeEntryRepository {
     private val jdbcTemplate: JdbcTemplate = JdbcTemplate(dataSource)
 
     override fun create(timeEntry: TimeEntry): TimeEntry? {
-        val keyHolder = GeneratedKeyHolder()
+        val simpleJdbc = SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("time_entries")
+                .usingColumns("project_id", "user_id", "date", "hours")
+                .usingGeneratedKeyColumns("id")
+        val id = simpleJdbc.executeAndReturnKey(mapOf(
+                Pair("project_id", timeEntry.projectId),
+                Pair("user_id", timeEntry.userId),
+                Pair("date", Date.valueOf(timeEntry.date)),
+                Pair("hours", timeEntry.hours)
+        ))
 
-        jdbcTemplate.update({ connection ->
-            val statement = connection.prepareStatement(
-                    "INSERT INTO time_entries (project_id, user_id, date, hours) " +
-                            "VALUES (?, ?, ?, ?)",
-                    RETURN_GENERATED_KEYS)
-            statement.setLong(1, timeEntry.projectId)
-            statement.setLong(2, timeEntry.userId)
-            statement.setDate(3, Date.valueOf(timeEntry.date))
-            statement.setInt(4, timeEntry.hours)
-            statement
-        }, keyHolder)
-
-        return find(keyHolder.key?.toLong()!!)
+        return find(id.toLong())
     }
 
     override fun find(id: Long): TimeEntry? {
+
         return jdbcTemplate.query(
                 "SELECT id, project_id, user_id, date, hours FROM time_entries WHERE id = ?",
                 TimeEntryRowMapper(),

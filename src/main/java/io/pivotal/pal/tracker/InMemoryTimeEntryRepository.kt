@@ -29,7 +29,7 @@ class InMemoryTimeEntryRepository : TimeEntryRepository {
         return map.remove(id)
     }
 
-    override fun create(timeEntry: TimeEntry): TimeEntry {
+    override fun create(timeEntry: TimeEntry): TimeEntry? {
         val newTimeEntry = TimeEntry(
                 idCounter.incrementAndGet(),
                 timeEntry.projectId,

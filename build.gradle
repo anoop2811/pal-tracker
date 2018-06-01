@@ -3,7 +3,7 @@ import org.flywaydb.gradle.task.FlywayMigrateTask
 buildscript {
     ext {
         kotlinVersion = '1.2.41'
-        springBootVersion = '2.0.2.RELEASE'
+        springBootVersion = '1.5.13.RELEASE'
         flywayVersion = '5.0.0'
     }
     repositories {
@@ -46,6 +46,7 @@ repositories {
 
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
+    compile("org.springframework.boot:spring-boot-starter-actuator")
     compile('com.fasterxml.jackson.core:jackson-annotations')
     compile('com.fasterxml.jackson.core:jackson-core')
     compile('com.fasterxml.jackson.module:jackson-module-kotlin')
@@ -56,6 +57,7 @@ dependencies {
     compile("mysql:mysql-connector-java:6.0.6")
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('org.springframework.security:spring-security-test')
 }
 
 def developmentDbUrl = "jdbc:mysql://localhost:3306/tracker_dev?user=tracker&useSSL=false&useTimezone=true&serverTimezone=UTC&useLegacyDatetimeCode=false"
@@ -64,11 +66,13 @@ def testDbUrl = "jdbc:mysql://localhost:3306/tracker_test?user=tracker&useSSL=fa
 bootRun.environment([
         "WELCOME_MESSAGE"      : "hello",
         "SPRING_DATASOURCE_URL": developmentDbUrl,
+        "MANAGEMENT_SECURITY_ENABLED": false,
 ])
 
 test.environment([
         "WELCOME_MESSAGE"      : "Hello from test",
         "SPRING_DATASOURCE_URL": testDbUrl,
+        "MANAGEMENT_SECURITY_ENABLED": false,
 ])
 
 flyway {
@@ -80,4 +84,8 @@ flyway {
 
 task testMigrate(type: FlywayMigrateTask) {
     url = testDbUrl
+}
+
+springBoot {
+    buildInfo()
 }

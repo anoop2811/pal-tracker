@@ -55,6 +55,7 @@ dependencies {
     compile("org.jetbrains.kotlin:kotlin-reflect")
     compile("org.springframework.boot:spring-boot-starter-jdbc")
     compile("mysql:mysql-connector-java:6.0.6")
+    compile("org.springframework.boot:spring-boot-starter-security")
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')
@@ -67,12 +68,14 @@ bootRun.environment([
         "WELCOME_MESSAGE"      : "hello",
         "SPRING_DATASOURCE_URL": developmentDbUrl,
         "MANAGEMENT_SECURITY_ENABLED": false,
+        "HTTPS_DISABLED": true,
 ])
 
 test.environment([
         "WELCOME_MESSAGE"      : "Hello from test",
         "SPRING_DATASOURCE_URL": testDbUrl,
         "MANAGEMENT_SECURITY_ENABLED": false,
+        "HTTPS_DISABLED": true,
 ])
 
 flyway {
